@@ -41,7 +41,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </div>
       </div>
 
-      <CategoryFilter categories={categories} activeSlug={categorySlug} />
+      <CategoryFilter activeSlug={categorySlug} />
 
       {activeCategory && (
         <div className="text-center mt-4">
