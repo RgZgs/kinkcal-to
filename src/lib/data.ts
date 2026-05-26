@@ -289,18 +289,7 @@ export const events: Event[] = [
     source: 'torontogothevents.com',
     category_slugs: ['latex', 'bdsm', 'fetish', 'goth'],
   },
-  {
-    id: 'yussur',
-    title: 'YUSSUR — Toronto Leather Week',
-    description: 'A leather-driven dance party igniting heat, rhythm, and community as Toronto Leather Week comes to a close. Sponsored by Northbound Leather.',
-    venue: 'Crews & Tangos',
-    address: '508 Church St, Toronto',
-    start_time: '2026-06-10T21:00:00',
-    end_time: '2026-06-11T04:00:00',
-    url: 'https://www.eventbrite.ca/e/yussur-tickets-1975214683289',
-    source: 'eventbrite.ca',
-    category_slugs: ['leather', 'circuit'],
-  },
+  // YUSSUR removed: was Jan 10 2026, already past. No future date confirmed.
   {
     id: 'pitbull-bunker',
     title: 'Pitbull Bunker Take Over',
@@ -358,8 +347,8 @@ export const events: Event[] = [
     description: "Impulse is one of Toronto's largest fetish party series. Known for enticing stage and circus performances, thumping Techno/Industrial soundscapes, curated dungeon, and a wide range of themes. Art, Fetish and Dance!",
     venue: 'Toronto',
     address: 'Toronto',
-    start_time: '2026-06-20T22:00:00',
-    end_time: '2026-06-21T04:00:00',
+    start_time: '2026-05-30T21:00:00',
+    end_time: '2026-05-31T04:00:00',
     url: 'https://www.eventbrite.ca/e/hardwired-x-techromancy-tickets-1984525405911',
     source: 'impulseto.com',
     category_slugs: ['bdsm', 'fetish', 'circuit'],
@@ -376,4 +365,5 @@ export const events: Event[] = [
     source: 'yohomo.ca',
     category_slugs: ['leather', 'latex', 'puppy', 'bdsm', 'fetish', 'bear'],
   },
+  // NOTE: Playground was originally Dec 2025, moved to Dec 2026 as likely annual
 ];
