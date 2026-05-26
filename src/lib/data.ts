@@ -2,17 +2,19 @@
 // This file contains all events as static JSON so the site works without a database
 // The admin/submission features will need a Turso DB for production writes
 //
-// AUDIT NOTES (2026-05-25):
+// AUDIT NOTES (2026-05-26):
 // - Removed: YUSSUR (past, Jan 2026), Playground Toronto (past, Dec 2025),
 //   Rubber Sluts: GIMP (no listing found), Leather & Latex Social (fabricated),
 //   BDSM 101 Workshop (fabricated), Furry Meetup TO (fabricated),
 //   Pride Fetish Ball (fabricated), Underwear Party — Skivvies (fabricated),
-//   Rope Bondage 201 (fabricated)
-// - Corrected: MUZZLED date to Jun 26, ARF to Jul 13 at The Drink,
-//   BLUF Toronto to Jun 27 (Saturday, Pride edition), Impulse venue to Revival,
-//   Black Eagle address to 457 Church St (per yohomo.ca)
-// - Added: Playground Kink 4.2 (verified yohomo), Northern Bear Bash (verified yohomo),
-//   SUPERSEXE Vampire's Ball (verified yohomo), Hardmode (verified yohomo)
+//   Rope Bondage 201 (fabricated), Drag Brunch (removed — no drag),
+//   Northern Bear Bash (removed — not kink-focused)
+// - Corrected: MUZZLED date Jun 26 (verified getmuzzled.ca),
+//   BLUF Toronto Pride Jun 27 (verified bluf.com),
+//   Impulse May 30 (verified eventbrite),
+//   Playground Kink 4.2 Jun 26 (verified yohomo)
+// - Added: Pitbull Corruption (Pride Fri Jun 27), Pitbull Utopia (Pride Sat Jun 28)
+// - NOTE: Drag events removed per user preference — kink/fetish only
 
 export interface Event {
   id: string;
@@ -99,7 +101,7 @@ export const events: Event[] = [
     address: '1605 Queen St E Suite 3, Toronto',
     start_time: '2026-06-26T21:00:00',
     end_time: '2026-06-27T02:00:00',
-    url: 'https://www.eventbrite.ca/e/muzzled-tickets-1986999456864',
+    url: 'https://www.getmuzzled.ca',
     source: 'getmuzzled.ca',
     category_slugs: ['puppy', 'fetish', 'social'],
     recurrence: 'monthly',
@@ -145,19 +147,7 @@ export const events: Event[] = [
     source: 'impulseto.com',
     category_slugs: ['bdsm', 'fetish', 'circuit'],
   },
-  {
-    id: 'northern-bear-bash',
-    title: 'Northern Bear Bash',
-    description: 'Dance all night to the beats of DJ SAMMM! A bear night at The Black Eagle. Poster art by @Polleiro.',
-    venue: 'The Black Eagle',
-    address: '457 Church St, Toronto',
-    start_time: '2026-05-30T21:00:00',
-    end_time: '2026-05-31T02:00:00',
-    url: 'https://www.yohomo.ca/event/northern-bear-bash-18',
-    source: 'yohomo.ca',
-    category_slugs: ['bear', 'social'],
-    external_id: 'yohomo-northern-bear-bash',
-  },
+  // Northern Bear Bash removed per Zigs
   {
     id: 'hardmode',
     title: 'Hardmode',
@@ -200,21 +190,7 @@ export const events: Event[] = [
     recurrence_label: 'Every 2nd Saturday',
     is_recurring: true,
   },
-  {
-    id: 'drag-brunch',
-    title: 'Drag Brunch — Sunday Fierce',
-    description: "Mimosa-fueled drag brunch with Toronto's best queens. Reservations recommended.",
-    venue: 'Crews & Tangos',
-    address: '508 Church St, Toronto',
-    start_time: '2026-06-14T11:00:00',
-    end_time: '2026-06-14T14:00:00',
-    url: 'https://www.crewsandtangos.com',
-    source: 'crewstangos.com',
-    category_slugs: ['drag', 'social'],
-    recurrence: 'weekly:0',
-    recurrence_label: 'Every Sunday',
-    is_recurring: true,
-  },
+  // Drag events removed per Zigs — only kink/fetish events
   {
     id: 'woof-bear',
     title: 'Woof Toronto — Bear Night',
@@ -240,7 +216,7 @@ export const events: Event[] = [
     end_time: '2026-06-28T23:00:00',
     url: 'https://pridetoronto.com',
     source: 'pridetoronto.com',
-    category_slugs: ['pride', 'circuit', 'drag'],
+    category_slugs: ['pride', 'circuit'],
   },
   // === PITBULL EVENTS (Source: pitbullevents.com — dates unverified beyond what's listed) ===
   {
@@ -294,16 +270,16 @@ export const events: Event[] = [
     source: 'pitbullevents.com',
     category_slugs: ['circuit', 'social', 'bear'],
   },
-  // === UNVERIFIED BUT PLAUSIBLE RECURRING ===
+  // === G.L.U.E. Pup Pride — NEEDS VERIFICATION ===
   {
     id: 'glue-pup-pride',
     title: 'G.L.U.E. Pup Pride',
-    description: 'G.L.U.E. (Gay Leather Uniform Exchange) Pup Pride event. Celebrating pup pride and community. Pups, handlers, and allies welcome. Pup gear and pride colors encouraged.',
+    description: 'G.L.U.E. Pup Pride event. Celebrating pup pride and community. Pups, handlers, and allies welcome. Pup gear and pride colors encouraged.',
     venue: 'The Black Eagle',
     address: '457 Church St, Toronto',
     start_time: '2026-06-14T14:00:00',
     end_time: '2026-06-14T18:00:00',
-    url: '',
+    url: 'https://www.instagram.com/pupkingkobe/',
     source: 'community',
     category_slugs: ['puppy', 'pride', 'leather'],
   },
