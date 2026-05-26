@@ -1,30 +1,24 @@
 import { NextResponse } from 'next/server';
-import { runAllScrapers } from '@/lib/scraper';
-
-export const dynamic = 'force-dynamic';
-
-export async function POST() {
-  try {
-    const results = await runAllScrapers();
-    return NextResponse.json({
-      status: 'ok',
-      muzzled: results.muzzled,
-      yohomo: results.yohomo,
-    });
-  } catch (error: any) {
-    console.error('Scraper error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
+import { categories } from '@/lib/data';
 
 export async function GET() {
-  try {
-    const { getDb } = await import('@/lib/db');
-    const db = getDb();
-    const sources = db.prepare('SELECT * FROM event_sources ORDER BY name').all();
-    const logs = db.prepare('SELECT * FROM scrape_log ORDER BY scraped_at DESC LIMIT 10').all();
-    return NextResponse.json({ sources, logs });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  return NextResponse.json({
+    status: 'ok',
+    message: 'KinkCal TO scraper API (static data version)',
+    sources: [
+      { name: 'Muzzled', url: 'https://www.getmuzzled.ca', type: 'muzzled' },
+      { name: 'YoHomo', url: 'https://www.yohomo.ca', type: 'yohomo' },
+      { name: 'Toronto Goth Events', url: 'https://www.torontogothevents.com', type: 'torontogothevents' },
+      { name: 'Pitbull Events', url: 'https://www.pitbullevents.com', type: 'pitbull' },
+      { name: 'Impulse TO', url: 'https://www.impulseto.com', type: 'impulse' },
+    ],
+    categories: categories.length,
+  });
+}
+
+export async function POST() {
+  return NextResponse.json({
+    status: 'ok',
+    message: 'Scraping is handled by the Pilot agent cron job. Events are added to the static data file.',
+  });
 }
