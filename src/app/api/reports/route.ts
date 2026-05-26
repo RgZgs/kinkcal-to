@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { events } from '@/lib/data';
 import { classifyEvent, isFutureDate, validateYear, generateSearchQueries } from '@/lib/scraper';
+import { isAdminRequest } from '@/lib/security';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
@@ -19,7 +20,12 @@ interface ReportEntry {
   is_future: boolean;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Admin only — requires ADMIN_TOKEN
+  if (!isAdminRequest(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const report: ReportEntry[] = [];
   
   for (const event of events) {

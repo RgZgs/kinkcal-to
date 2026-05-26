@@ -38,38 +38,57 @@ export default function AdminPage() {
   const [reportData, setReportData] = useState<any>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState('');
+  const [authenticated, setAuthenticated] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  const fetchWithAuth = async (url: string, method = 'GET', body?: any) => {
+    const opts: RequestInit = {
+      method,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+      },
+    };
+    if (body) opts.body = JSON.stringify(body);
+    return fetch(url, opts);
+  };
+
+  const tryAuth = async () => {
+    const res = await fetchWithAuth('/api/reports');
+    if (res.ok) {
+      setAuthenticated(true);
+      setAuthError('');
+      const data = await res.json();
+      setReportData(data);
+    } else {
+      setAuthError('Wrong password');
+    }
+  };
 
   useEffect(() => {
-    if (tab === 'reports' && !reportData) {
+    if (tab === 'reports' && authenticated) {
       setLoading(true);
-      fetch('/api/reports')
+      fetchWithAuth('/api/reports')
         .then(r => r.json())
         .then(data => { setReportData(data); setLoading(false); })
         .catch(() => setLoading(false));
     }
-    if (tab === 'submissions') {
-      fetch('/api/submit')
+    if (tab === 'submissions' && authenticated) {
+      fetchWithAuth('/api/submit')
         .then(r => r.json())
         .then(data => setSubmissions(data.submissions || []))
         .catch(() => {});
     }
-  }, [tab]);
+  }, [tab, authenticated]);
 
   const approveSubmission = async (id: string) => {
-    await fetch('/api/submit', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, status: 'approved' }),
-    });
+    await fetchWithAuth('/api/submit', 'PATCH', { id, status: 'approved' });
     setSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: 'approved' as const } : s));
   };
 
   const rejectSubmission = async (id: string) => {
-    await fetch('/api/submit', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, status: 'rejected' as const }),
-    });
+    await fetchWithAuth('/api/submit', 'PATCH', { id, status: 'rejected' });
     setSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: 'rejected' as const } : s));
   };
 
@@ -85,24 +104,53 @@ export default function AdminPage() {
         <a href="/api/calendar.ics" className="btn-secondary text-sm">📅 .ics Feed</a>
       </div>
 
-      {/* Tab nav */}
-      <div className="flex gap-1 mb-6 border-b border-zinc-800">
-        {(['events', 'reports', 'submissions'] as Tab[]).map(t => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              tab === t
-                ? 'border-violet-400 text-violet-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
-            }`}
-          >
-            {t === 'events' ? `Events (${events.length})` : t === 'reports' ? 'Reports' : `Submissions (${pendingSubs.length})`}
-          </button>
-        ))}
+      {/* Auth gate */}
+      {!authenticated && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 text-center">
+          <p className="text-zinc-400 mb-4">Enter admin password to access reports & submissions</p>
+          <div className="flex gap-2 max-w-sm mx-auto">
+            <input
+              type="password"
+              value={token}
+              onChange={e => setToken(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && tryAuth()}
+              className="input-field flex-1"
+              placeholder="Admin token"
+            />
+            <button onClick={tryAuth} className="btn-primary">Unlock</button>
+          </div>
+          {authError && <p className="text-red-400 text-sm mt-2">{authError}</p>}
+          <p className="text-zinc-600 text-xs mt-4">
+            Events tab is visible without auth. Reports & submissions require the admin token.
+          </p>
+        </div>
+      )}
+
+      {/* Tab nav — always visible */}
+      <div className="flex gap-1 mb-6 border-b border-zinc-800 mt-4">
+        {(['events', 'reports', 'submissions'] as Tab[]).map(t => {
+          const needsAuth = t !== 'events';
+          const locked = needsAuth && !authenticated;
+          return (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              disabled={locked}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                tab === t
+                  ? 'border-violet-400 text-violet-400'
+                  : locked
+                    ? 'border-transparent text-zinc-700 cursor-not-allowed'
+                    : 'border-transparent text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              {t === 'events' ? `Events (${events.length})` : t === 'reports' ? `Reports ${locked ? '🔒' : ''}` : `Submissions (${pendingSubs.length}) ${locked ? '🔒' : ''}`}
+            </button>
+          );
+        })}
       </div>
 
-      {/* EVENTS TAB */}
+      {/* EVENTS TAB — no auth needed, reads static data */}
       {tab === 'events' && (
         <section>
           <h2 className="text-lg font-semibold text-green-400 mb-3">✅ Published Events ({events.length})</h2>
@@ -126,7 +174,7 @@ export default function AdminPage() {
       )}
 
       {/* REPORTS TAB */}
-      {tab === 'reports' && (
+      {tab === 'reports' && authenticated && (
         <section>
           {loading && <p className="text-zinc-500">Loading report...</p>}
           {reportData && (
@@ -206,7 +254,7 @@ export default function AdminPage() {
       )}
 
       {/* SUBMISSIONS TAB */}
-      {tab === 'submissions' && (
+      {tab === 'submissions' && authenticated && (
         <section>
           {pendingSubs.length === 0 ? (
             <p className="text-zinc-500 text-center py-8">No pending submissions</p>
